@@ -1,11 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task Manager</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
+ 
+<h1>Just do it</h1>
+
+<input type="text" id="taskInput" placeholder="Enter task...">
+<button id="addTaskButton">Add Task</button>
+
+<h2>Ready Tasks</h2>
+<ul id="readyList"></ul>
+
+<h2>On Hold Tasks</h2>
+<ul id="onHoldList"></ul>
+
+<script>
+    const tasks = [
+
+    ];
+
+    let readyCount = 0;
+    let onHoldCount = 0;
+    let readyTasks = [];
+    let onHoldTasks = [];
+
+    function updateTaskList() {
+      readyCount = 0;
+      onHoldCount = 0;
+      readyTasks = [];
+      onHoldTasks = [];
+
+      tasks.forEach(task => {
+        if (task.status.toLowerCase() === "ready") {
+          readyCount++;
+          readyTasks.push(task);
+        } else if (task.status.toLowerCase() === "on hold") {
+          onHoldCount++;
+          onHoldTasks.push(task);
+        }
+      });
+
+
+      updateReadyList();
+      updateOnHoldList();
+    }
+
+    function updateReadyList() {
+      const readyList = document.getElementById("readyList");
+      readyList.innerHTML = ''; 
+      readyTasks.forEach(task => {
+        const li = document.createElement("li");
+        li.textContent = `ID: ${task.id}, Tarea: ${task.task}`;
+        
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", () => deleteTask(task.id));
+        
+        li.appendChild(deleteButton);
+        readyList.appendChild(li);
+      });
+    }
+
+    function updateOnHoldList() {
+      const onHoldList = document.getElementById("onHoldList");
+      onHoldList.innerHTML = ''; 
+      onHoldTasks.forEach(task => {
+        const li = document.createElement("li");
+        li.textContent = `ID: ${task.id}, Tarea: ${task.task}`;
+        
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", () => deleteTask(task.id));
+        
+        li.appendChild(deleteButton);
+        onHoldList.appendChild(li);
+      });
+    }
+
+    function deleteTask(taskId) {
+      const index = tasks.findIndex(task => task.id === taskId);
+      if (index !== -1) {
+        tasks.splice(index, 1);
+        updateTaskList();
+      }
+    }
+
+
+    updateTaskList();
+
+
+    const addTaskButton = document.getElementById("addTaskButton");
+    addTaskButton.addEventListener("click", () => {
+      const taskInput = document.getElementById("taskInput");
+      const newTask = taskInput.value.trim();
+
+      if (newTask !== "") {
+        const newTaskId = Math.floor(Math.random() * 100000); 
+        tasks.push({ task: newTask, status: "ready", id: newTaskId });
+        taskInput.value = ""; 
+        updateTaskList();
+      }
+    });
+  </script>
 </body>
 </html>
